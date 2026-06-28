@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MouseEverywhere</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue-50:  #eff6ff;
+      --blue-100: #dbeafe;
+      --blue-200: #bfdbfe;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --blue-800: #1e40af;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      background: #fff;
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Decorative background ── */
+    .bg-decoration {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-decoration::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle at 30% 40%, rgba(59,130,246,.12), transparent 65%);
+    }
+    .bg-decoration::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      right: -15%;
+      width: 70%;
+      height: 70%;
+      background: radial-gradient(circle at 70% 60%, rgba(37,99,235,.10), transparent 65%);
+    }
+
+    /* ── Header / Nav ── */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      position: relative;
+      z-index: 10;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-area img {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      box-shadow: 0 2px 12px rgba(30,64,175,.15);
+    }
+    .logo-area span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--blue-700);
+      letter-spacing: -.3px;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 40px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Hero text ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      background: linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      margin-top: 12px;
+      font-size: 1.15rem;
+      color: #64748b;
+      font-weight: 400;
+      letter-spacing: -.1px;
+    }
+
+    /* ── Video ── */
+    .video-wrapper {
+      width: 100%;
+      max-width: 960px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow:
+        0 4px 6px -1px rgba(0,0,0,.04),
+        0 10px 30px -5px rgba(37,99,235,.18),
+        0 0 0 1px rgba(255,255,255,.5) inset;
+      background: #f8fafc;
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      color: var(--blue-400);
+      font-size: 1rem;
+      letter-spacing: .2px;
+    }
+
+    /* ── CTA ── */
+    .cta-area {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* App Store button */
+    .btn-appstore {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 36px;
+      background: #000;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 999px;
+      text-decoration: none;
+      letter-spacing: -.2px;
+      transition: transform .2s, box-shadow .3s, background .3s;
+      box-shadow: 0 6px 24px rgba(0,0,0,.18), 0 1px 3px rgba(0,0,0,.08);
+    }
+    .btn-appstore:hover {
+      transform: translateY(-2px);
+      background: #111;
+      box-shadow: 0 10px 32px rgba(0,0,0,.22), 0 2px 6px rgba(0,0,0,.12);
+    }
+    .btn-appstore:active {
+      transform: translateY(0);
+    }
+    .btn-appstore svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    /* Secondary button */
+    .btn-secondary {
+      font-size: .9rem;
+      color: var(--blue-600);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .btn-secondary:hover {
+      color: var(--blue-800);
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 32px 24px;
+      font-size: .82rem;
+      color: #94a3b8;
+      letter-spacing: -.1px;
+      position: relative;
+      z-index: 1;
+    }
+    footer a {
+      color: var(--blue-500);
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      header {
+        padding: 18px 24px;
+      }
+      main {
+        padding: 20px 16px 60px;
+      }
+      .video-wrapper {
+        border-radius: 14px;
+      }
+      .btn-appstore {
+        padding: 13px 28px;
+        font-size: .98rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-decoration"></div>
+
+<header>
+  <div class="logo-area">
+    <img src="icon_512x512.png" alt="MouseEverywhere Logo">
+    <span>MouseEverywhere</span>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Your Cursor, Everywhere</h1>
+    <p>See translucent ghost cursors on all screens and jump between them with a keystroke.</p>
+  </div>
+
+  <div class="video-wrapper">
+    <!-- Replace the src below with your actual video -->
+    <video
+      src=""
+      controls
+      poster="icon_512x512.png"
+      preload="metadata"
+    >
+    </video>
+    <!-- Placeholder shown when no video source is set -->
+    <div class="video-placeholder">Video Preview — Replace with your demo video</div>
+  </div>
+
+  <div class="cta-area">
+    <a class="btn-appstore" href="https://apps.apple.com/app/idYOURAPPID" target="_blank" rel="noopener">
+      <!-- Apple logo SVG -->
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+      </svg>
+      Download from App Store
+    </a>
+    <a class="btn-secondary" href="#">Learn More &rarr;</a>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 MouseEverywhere. All rights reserved.
+  &nbsp;&middot;&nbsp;
+  <a href="#">Privacy Policy</a>
+  &nbsp;&middot;&nbsp;
+  <a href="#">Terms of Use</a>
+</footer>
+
+</body>
+</html>
